@@ -2,6 +2,8 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
+using testClass;
+using MessagePack;
 
 var factory = new ConnectionFactory()
 {
@@ -17,8 +19,8 @@ var consumer = new EventingBasicConsumer(channel);
 consumer.Received += (model, ea) =>
 {
     var body = ea.Body.ToArray();
-    var message = Encoding.UTF8.GetString(body);
-    WriteLine($"Received: {message} -> {DateTime.Now.ToString("HH:mm:ss")}");
+    var class1 = MessagePackSerializer.Deserialize<TestClass1>(body);
+    WriteLine($"Received: {class1.number1} {class1.msg1} -> {DateTime.Now.ToString("HH:mm:ss")}");
 };
 
 channel.BasicConsume("test1", true, consumer);

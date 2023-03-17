@@ -1,6 +1,7 @@
 ﻿using static System.Console;
 using RabbitMQ.Client;
-using System.Text;
+using testClass;
+using MessagePack;
 
 var factory = new ConnectionFactory()
 {
@@ -23,9 +24,13 @@ do
 {
     if (!paused)
     {
-        var msg1 = counter++ + " test message - " + DateTime.Now.ToString("HH:mm:ss");
-        var body = Encoding.UTF8.GetBytes(msg1);
+        TestClass1 class1 = new TestClass1()
+        {
+            msg1 = "test message - " + DateTime.Now.ToString("HH:mm:ss"),
+            number1 = counter++
+        };
 
+        var body = MessagePackSerializer.Serialize(class1);
         channel.BasicPublish(string.Empty, "test1", null, body);
     }
 
